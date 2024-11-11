@@ -6,7 +6,16 @@ The Attendance App is a mobile application built with Flutter to streamline atte
 
 **• User Sign-Up & Profile Management:** Allows users to sign up, upload their profile picture, and store contact details for easy account access.  
 **• Attendance Tracking:** Users can check in and out daily, capturing their location, timestamp, and a verification photo.  
-**• Attendance History:** Provides a 7-day history view, showing if the user was late, worked overtime, and total working hours for each day. Users can search attendance by specific dates.  
+**• Attendance History:** Provides an 11-day history view, showing if the user was late, worked overtime, and total working hours for each day. Users can search for attendance by specific dates.  
 **• Monthly Attendance Report:** Visual representation of attendance in a pie chart format.  
 **• Location Mapping:** Displays check-in/check-out locations on a map with a red pin marker.  
 **• Secure Data Storage:** All data is stored securely using Firebase.
+
+## Technologies Used
+
+**Flutter:** Cross-platform framework for the app’s UI and functionality.  
+**Firebase:** Backend storage and authentication.  
+**Geolocator:** For capturing user location.  
+**Image Picker:** To capture user photos during check-in and check-out.  
+**Flutter Map:** To visualize user locations on a map.  
+**fl_chart:** For creating pie charts that visualize attendance data.  
