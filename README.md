@@ -51,8 +51,9 @@ To get a local copy up and running, follow these steps:
 ## Contact
 
 If you have any questions or want to reach out, contact me here:  
-**Name**: Samarth Sharma
-**Email**: [samarth2668@gmail.com](mailto:samarth2668@gmail.com)
+
+**Name**: Samarth Sharma  
+**Email**: [samarth2668@gmail.com](mailto:samarth2668@gmail.com)  
 **LinkedIn**: [https://linkedin.com/in/saysamarth](https://linkedin.com/in/saysamarth)
 
-Project Link: 
+Project Link: https://github.com/saysamarth/TrackMyAttendance
