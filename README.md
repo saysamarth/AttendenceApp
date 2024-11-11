@@ -48,22 +48,11 @@ To get a local copy up and running, follow these steps:
 4. **View Monthly Report:** Check monthly attendance trends displayed in a pie chart.  
 5. **Sign Out:** Sign out securely from the settings screen.
 
-## Contributing 
-Contributions are welcome! If you have ideas or suggestions, please fork the repository and create a pull request. You can also open an issue with the tag "enhancement".
+## Contact
 
-To contribute:
+If you have any questions or want to reach out, contact me here:  
+**Name**: Samarth Sharma
+**Email**: [samarth2668@gmail.com](mailto:samarth2668@gmail.com)
+**LinkedIn**: [https://linkedin.com/in/saysamarth](https://linkedin.com/in/saysamarth)
 
-Fork the Project
-Create a Feature Branch:
-bash
-Copy code
-git checkout -b feature/AmazingFeature
-Commit Your Changes:
-bash
-Copy code
-git commit -m 'Add some AmazingFeature'
-Push to the Branch:
-bash
-Copy code
-git push origin feature/AmazingFeature
-Open a Pull Request
+Project Link: 
