@@ -34,7 +34,7 @@ void _showPermissionDialog(BuildContext context) {
         title: const Text("Location Permission Required"),
         content: const Text(
             "Location permission is permanently denied. Please enable it in the app settings."),
-        actions: <Widget>[
+        actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();

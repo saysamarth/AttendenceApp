@@ -1,4 +1,5 @@
 import 'package:attendanceapp/main.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,6 +19,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final _formkey = GlobalKey<FormState>();
   var _enteredEmail = '';
   var _enteredPassword = '';
+  bool _isAuthenticating = false; 
 
   Future<void> login() async {
     final isValid = _formkey.currentState!.validate();
@@ -31,7 +33,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()),
+            MaterialPageRoute(builder: (context) => const BottomNavBar()),
           );
         }
       } on FirebaseAuthException catch (error) {
@@ -40,6 +42,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login failed !!')),
         );
+      }finally {
+        setState(() {
+          _isAuthenticating = false;
+        });
       }
     }
   }
@@ -114,19 +120,40 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  onPressed: () async {
-                    await login();
-                  },
+                  onPressed: _isAuthenticating
+                      ? null
+                      : () async {
+                          await login();
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 169, 228, 254),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(color: Color.fromARGB(255, 6, 84, 148)),
-                  ),
+                  child: _isAuthenticating
+                      ? Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(
+                                255, 169, 228, 254), 
+                            borderRadius: BorderRadius.circular(
+                                30.0),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color.fromARGB(255, 6, 84,
+                                      148)),
+                            ),
+                          ),
+                        )
+                      : const Text(
+                          'Login',
+                          style:
+                              TextStyle(color: Color.fromARGB(255, 6, 84, 148)),
+                        ),
                 ),
                 const SizedBox(height: 10),
                 TextButton(
@@ -159,46 +186,59 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formkey = GlobalKey<FormState>();
+  var _isAuthenticating = false;
   var _enteredEmail = '';
   var _enteredPassword = '';
   var _enteredPhone = '';
   var _enteredName = '';
   File? _profileImage;
 
-  Future pickImage() async {
+  void pickImage() async {
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (returnedImage != null) {
-      setState(() {
-        _profileImage = File(returnedImage.path);
-      });
+    if (returnedImage == null) {
+      return;
     }
+    setState(() {
+      _profileImage = File(returnedImage.path);
+    });
   }
 
   Future<void> signUp() async {
     final isValid = _formkey.currentState!.validate();
     _formkey.currentState!.save();
-    if (isValid) {
+    if (isValid && _profileImage != null) {
       try {
+        setState(() {
+          _isAuthenticating = true;
+        });
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _enteredEmail,
           password: _enteredPassword,
         );
+        final storageref = FirebaseStorage.instance
+            .ref()
+            .child("user_image")
+            .child('${userCredential.user!.uid}.jpg');
 
-        User? user = userCredential.user;
+        await storageref.putFile(_profileImage!);
+        final imageurl = await storageref.getDownloadURL();
+
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(user!.uid)
+            .doc(userCredential.user!.uid)
             .set({
           'name': _enteredName,
           'email': _enteredEmail,
           'phone': _enteredPhone,
+          'imageURL': imageurl
         });
+
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()),
+            MaterialPageRoute(builder: (context) => const BottomNavBar()),
           );
         }
       } on FirebaseAuthException catch (error) {
@@ -209,6 +249,9 @@ class _SignUpPageState extends State<SignUpPage> {
             content: Text('Authentication failed.'),
           ),
         );
+        setState(() {
+          _isAuthenticating = false;
+        });
       }
     }
   }
@@ -333,19 +376,38 @@ class _SignUpPageState extends State<SignUpPage> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () async {
-                    await signUp();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 208, 237, 250),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                if (_isAuthenticating)
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 208, 237, 250),
+                      borderRadius:
+                          BorderRadius.circular(30.0),
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Color.fromARGB(
+                                255, 6, 84, 148)),
+                      ),
                     ),
                   ),
-                  child: const Text('Sign Up',
-                      style: TextStyle(color: Color.fromARGB(255, 6, 84, 148))),
-                ),
+                if (!_isAuthenticating)
+                  ElevatedButton(
+                    onPressed: () async {
+                      await signUp();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 208, 237, 250),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    child: const Text('Sign Up',
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 6, 84, 148))),
+                  ),
               ],
             ),
           ),

@@ -1,11 +1,12 @@
 import 'package:attendanceapp/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:attendanceapp/authscreen.dart';
+import 'package:attendanceapp/screens/authscreen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -13,15 +14,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(_createRoute());
+    Future.delayed(const Duration(seconds: 2), () {
+      if(mounted){ Navigator.of(context).pushReplacement(_createRoute());}
     });
   }
 
   Route _createRoute() {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          user != null ? BottomNavBar() : AuthenticationPage(),
+          user != null ? const BottomNavBar() : const AuthenticationPage(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
